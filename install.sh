@@ -1,22 +1,15 @@
 #!/data/data/com.termux/files/usr/bin/bash
-green='\e[92m'
-blue='\e[94m'
-yellow='\e[93m'
-reset='\e[0m'
 
-echo -e "${blue}[*] Aladdin V11 Installer Starting...${reset}"
-
-# လိုအပ်တဲ့ Package တွေစစ်မယ်
+# လိုအပ်တဲ့ package များသွင်းခြင်း
+echo -e "\e[93m[*] Installing dependencies...\e[0m"
 pkg update -y && pkg upgrade -y
-pkg install python git curl -y
-pip install requests ping3 ntplib pycryptodome
+pkg install python requests -y
 
-# Script ကို ဒေါင်းမယ် (Link ကို သေချာအောင် ပြင်ထားပါတယ်)
-echo -e "${blue}[*] Downloading Aladdin Script...${reset}"
-curl -L -o aladdin.py https://raw.githubusercontent.com/5Lkhant09/my-license-server/refs/heads/main/aladdin.py
+# Script ကို download ဆွဲခြင်း
+echo -e "\e[93m[*] Downloading Aladdin Bypass V11...\e[0m"
+curl -L https://raw.githubusercontent.com/5Lkhant09/my-license-server/main/aladdin.py -o aladdin.py
 
-# Permission ပေးမယ်
-chmod +x aladdin.py
-
-echo -e "${green}[✓] INSTALLATION COMPLETE!${reset}"
-echo -e "${yellow}[>] Start with: python aladdin.py${reset}"
+# Run ရန် ညွှန်ကြားချက်
+echo -e "\e[92m[✓] Installation Complete!\e[0m"
+echo -e "\e[94m[>] To start the tool, type: \e[93mpython aladdin.py\e[0m"
+python aladdin.py
