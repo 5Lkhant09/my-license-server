@@ -1,20 +1,28 @@
-import os, requests, time, platform
+import os, requests, time, subprocess
 from datetime import datetime
 from ntplib import NTPClient
 
-# Banner ပုံစံလေး
+# ပိုလန်းတဲ့ ID ထုတ်နည်း (Android ID ကို သုံးပါမယ်)
+def get_hwid():
+    try:
+        # Termux မှာ android_id ကို လှမ်းတောင်းကြည့်မယ်
+        id = subprocess.check_output(['settings', 'get', 'secure', 'android_id']).decode().strip()
+        return f"TRB-{id.upper()[:10]}"
+    except:
+        # တကယ်လို့ settings ထဲကဆွဲမရရင် တခြားနည်းနဲ့ ထုတ်မယ်
+        import platform
+        node = platform.node().upper()
+        if "LOCALHOST" in node or not node:
+            node = "USER" + str(os.getuid())
+        return f"TRB-{node[:10]}"
+
 def banner():
     os.system('clear')
-    print("\033[94m" + "="*40)
-    print("    ALADDIN STARLINK BYPASS V11    ")
-    print("      STATUS: [ ONLINE ]          ")
-    print("="*40 + "\033[0m")
+    print("\033[94m" + "■" * 45)
+    print("      🛡️  ALADDIN STARLINK BYPASS V11  🛡️      ")
+    print("         STATUS: [ \033[92mONLINE\033[94m ]             ")
+    print("■" * 45 + "\033[0m")
 
-# Device ID (HWID) ထုတ်ယူခြင်း
-def get_hwid():
-    return f"TRB-{platform.node().upper()[:10]}"
-
-# အချိန်အမှန် (Internet Time) ရယူခြင်း
 def get_net_time():
     try:
         client = NTPClient()
@@ -23,43 +31,42 @@ def get_net_time():
     except:
         return datetime.now()
 
-# License စစ်ဆေးခြင်း
 def check_license():
     hwid = get_hwid()
     banner()
-    print(f"\033[93m[>] YOUR ID: {hwid}\033[0m")
+    print(f"\033[93m[>] YOUR DEVICE ID: \033[97m{hwid}\033[0m")
+    print("\033[94m" + "—" * 45 + "\033[0m")
     
-    key_input = input("\033[96m[?] ENTER ACCESS KEY: \033[0m")
+    key_input = input("\033[96m[?] ENTER ACCESS KEY: \033[0m").strip()
     
-    # GitHub က key.txt ကို သွားစစ်မယ်
     url = "https://raw.githubusercontent.com/5Lkhant09/my-license-server/main/key.txt"
     try:
         resp = requests.get(url).text
         for line in resp.splitlines():
             if hwid in line and key_input in line:
-                # Format: ID|Key|DD-MM-YYYY HH:MM
                 parts = line.split('|')
                 expiry_str = parts[2]
                 expiry_date = datetime.strptime(expiry_str, "%d-%m-%Y %H:%M")
                 
                 if get_net_time() < expiry_date:
-                    print(f"\033[92m[✓] ACCESS GRANTED! EXPIRY: {expiry_str}\033[0m")
+                    print(f"\033[92m\n[✓] ACCESS GRANTED! \033[0m")
+                    print(f"\033[92m[•] EXPIRY DATE: {expiry_str}\033[0m")
                     time.sleep(2)
                     return True
                 else:
-                    print("\033[91m[!] KEY EXPIRED!\033[0m")
+                    print("\033[91m\n[!] KEY HAS EXPIRED!\033[0m")
                     return False
-        print("\033[91m[!] INVALID KEY OR ID!\033[0m")
+        
+        print("\033[91m\n[!] INVALID KEY FOR THIS DEVICE!\033[0m")
         return False
     except Exception as e:
-        print(f"\033[91m[!] SERVER ERROR: {e}\033[0m")
+        print(f"\033[91m\n[!] CONNECTION ERROR: {e}\033[0m")
         return False
 
-# Main Program
 if __name__ == "__main__":
     if check_license():
-        # ဒီနေရာမှာ သင့်ရဲ့ Bypass Logic တွေကို ဆက်ရေးလို့ရပါပြီ
-        print("\033[92m[*] TOOL IS RUNNING IN BACKGROUND...\033[0m")
+        print("\033[94m" + "—" * 45 + "\033[0m")
+        print("\033[92m[*] SYSTEM IS ACTIVE & BYPASSING...\033[0m")
         while True:
             time.sleep(10)
-          
+                    
