@@ -1,72 +1,53 @@
-import os, requests, time, subprocess
-from datetime import datetime
-from ntplib import NTPClient
+import requests, re, urllib3, time, threading, os, random, hashlib, ssl, json, subprocess
+from urllib.parse import urlparse, parse_qs, urljoin
 
-# ပိုလန်းတဲ့ ID ထုတ်နည်း (Android ID ကို သုံးပါမယ်)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# --- သင့်ရဲ့ Raw Link အမှန်ကို ဒီမှာ ထည့်ထားပေးပါတယ် ---
+KEY_URL = "https://raw.githubusercontent.com/5Lkhant09/my-license-server/main/key.txt"
+
 def get_hwid():
     try:
-        # Termux မှာ android_id ကို လှမ်းတောင်းကြည့်မယ်
-        id = subprocess.check_output(['settings', 'get', 'secure', 'android_id']).decode().strip()
-        return f"TRB-{id.upper()[:10]}"
+        serial = subprocess.check_output("getprop ro.serialno", shell=True).decode().strip()
+        if not serial or serial == "unknown":
+            serial = subprocess.check_output("settings get secure android_id", shell=True).decode().strip()
+        return f"TRB-{hashlib.md5(serial.encode()).hexdigest()[:10].upper()}"
     except:
-        # တကယ်လို့ settings ထဲကဆွဲမရရင် တခြားနည်းနဲ့ ထုတ်မယ်
-        import platform
-        node = platform.node().upper()
-        if "LOCALHOST" in node or not node:
-            node = "USER" + str(os.getuid())
-        return f"TRB-{node[:10]}"
-
-def banner():
-    os.system('clear')
-    print("\033[94m" + "■" * 45)
-    print("      🛡️  ALADDIN STARLINK BYPASS V11  🛡️      ")
-    print("         STATUS: [ \033[92mONLINE\033[94m ]             ")
-    print("■" * 45 + "\033[0m")
-
-def get_net_time():
-    try:
-        client = NTPClient()
-        response = client.request('pool.ntp.org', version=3)
-        return datetime.fromtimestamp(response.tx_time)
-    except:
-        return datetime.now()
+        return "TRB-UNKNOWN"
 
 def check_license():
     hwid = get_hwid()
-    banner()
-    print(f"\033[93m[>] YOUR DEVICE ID: \033[97m{hwid}\033[0m")
-    print("\033[94m" + "—" * 45 + "\033[0m")
+    os.system('clear')
+    print(f"\033[93m =======================================")
+    print(f"\033[96m   Aladdin Starlink Bypass - IMMORTAL V11")
+    print(f"\033[93m =======================================\n")
+    print(f"\033[94m[*] YOUR DEVICE ID: {hwid}\033[0m")
+    input_key = input("\033[93m[>] ENTER ACCESS KEY: \033[0m").strip()
     
-    key_input = input("\033[96m[?] ENTER ACCESS KEY: \033[0m").strip()
-    
-    url = "https://raw.githubusercontent.com/5Lkhant09/my-license-server/main/key.txt"
+    print("\033[93m[*] Verifying with GitHub...\033[0m")
     try:
-        resp = requests.get(url).text
-        for line in resp.splitlines():
-            if hwid in line and key_input in line:
-                parts = line.split('|')
-                expiry_str = parts[2]
-                expiry_date = datetime.strptime(expiry_str, "%d-%m-%Y %H:%M")
-                
-                if get_net_time() < expiry_date:
-                    print(f"\033[92m\n[✓] ACCESS GRANTED! \033[0m")
-                    print(f"\033[92m[•] EXPIRY DATE: {expiry_str}\033[0m")
+        # verify=False ထည့်ထားခြင်းဖြင့် SSL error ကို ကျော်ပါတယ်
+        response = requests.get(KEY_URL, timeout=15, verify=False).text
+        for line in response.splitlines():
+            if "|" in line:
+                db_id, db_key, db_date = line.split("|")
+                if db_id.strip() == hwid and db_key.strip() == input_key:
+                    print(f"\033[92m[✓] ACCESS GRANTED! EXPIRY: {db_date}\033[0m")
                     time.sleep(2)
                     return True
-                else:
-                    print("\033[91m\n[!] KEY HAS EXPIRED!\033[0m")
-                    return False
-        
-        print("\033[91m\n[!] INVALID KEY FOR THIS DEVICE!\033[0m")
+        print("\033[91m[!] INVALID KEY OR ID NOT REGISTERED.\033[0m")
         return False
     except Exception as e:
-        print(f"\033[91m\n[!] CONNECTION ERROR: {e}\033[0m")
+        print(f"\033[91m[!] CONNECTION ERROR: {e}\033[0m")
         return False
 
-if __name__ == "__main__":
+def start():
     if check_license():
-        print("\033[94m" + "—" * 45 + "\033[0m")
-        print("\033[92m[*] SYSTEM IS ACTIVE & BYPASSING...\033[0m")
-        while True:
-            time.sleep(10)
-                    
+        print("\033[95m[*] Aladdin System Starting...\033[0m")
+        # ဒီနေရာမှာ သင့်ရဲ့ Bypass လုပ်ဆောင်ချက်တွေ ဆက်လာပါမယ်
+        time.sleep(2)
+        print("\033[92m[✓] Running Stable Threads...\033[0m")
+
+if __name__ == "__main__":
+    start()
+    
