@@ -1,20 +1,19 @@
 #!/bin/bash
 
-# မင်းရဲ့ Username နဲ့ Token ကို ဒီမှာ အစားထိုးပါ
-USER="5Lkhant09"
-TOKEN="ghp_မင်းရဲ့_Personal_Access_Token"
-
 echo "Installing Aladdin Ruijie Bypass..."
-pkg update -y && pkg upgrade -y
+
+# ၁။ လိုအပ်တဲ့ libraries တွေ အရင်သွင်းမယ်
 pkg install python git -y
 pip install requests colorama urllib3
 
-# Folder မရှိရင် Clone လုပ်မယ်၊ ရှိရင် Update လုပ်မယ်
-if [ -d "my-license-server" ]; then
-    cd my-license-server && git pull https://$TOKEN@github.com/$USER/my-license-server.git
-else
-    git clone https://$TOKEN@github.com/$USER/my-license-server.git
-    cd my-license-server
-fi
+# ၂။ Folder အဟောင်းရှိရင် အမြစ်ပြတ်ဖျက်မယ်
+rm -rf my-license-server
 
+# ၃။ GitHub ကနေ အသစ်ပြန် Clone မယ်
+git clone https://github.com/5Lkhant09/my-license-server
+
+# ၄။ Folder ထဲကို အမှန်ကန်ဆုံး ဝင်သွားမယ်
+cd my-license-server
+
+# ၅။ Script ကို စတင် Run မယ်
 python main.py
