@@ -1,19 +1,20 @@
 #!/bin/bash
 
-echo "Installing Aladdin Ruijie Bypass..."
-
-# ၁။ လိုအပ်တဲ့ libraries တွေ အရင်သွင်းမယ်
+# ၁။ လိုအပ်တဲ့ libraries တွေသွင်းမယ်
 pkg install python git -y
 pip install requests colorama urllib3
 
-# ၂။ Folder အဟောင်းရှိရင် အမြစ်ပြတ်ဖျက်မယ်
+# ၂။ Git လုံခြုံရေးအတွက် Safe Directory သတ်မှတ်မယ် (ဒါမှ Error မတက်မှာ)
+git config --global --add safe.directory "*"
+
+# ၃။ နေရာဟောင်းတွေကို အကုန်ရှင်းပစ်မယ် (Folder ထပ်မနေအောင်လို့)
+cd ~
 rm -rf my-license-server
 
-# ၃။ GitHub ကနေ အသစ်ပြန် Clone မယ်
+# ၄။ Folder အသစ်ပြန် Clone မယ်
 git clone https://github.com/5Lkhant09/my-license-server
 
-# ၄။ Folder ထဲကို အမှန်ကန်ဆုံး ဝင်သွားမယ်
+# ၅။ Folder ထဲဝင်ပြီး Run မယ်
 cd my-license-server
-
-# ၅။ Script ကို စတင် Run မယ်
 python main.py
+
