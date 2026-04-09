@@ -16,12 +16,9 @@ git clone https://github.com/5Lkhant09/my-license-server
 # ၄။ Folder ထဲကို သေချာဝင်မယ်
 cd my-license-server
 
-# ၅။ ဖိုင်ရှိမရှိစစ်ပြီးမှ Run မယ် (ဖိုင်နာမည် မှန်ပါစေ)
+# ၅။ Script ကို Run မယ်
 if [ -f "main.py" ]; then
     python main.py
-elif [ -f "Pypass" ]; then
-    python Pypass
 else
-    echo "Error: Python file not found in repository!"
+    echo "Error: main.py not found! Please check your GitHub file name."
 fi
-
