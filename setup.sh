@@ -1,20 +1,27 @@
 #!/bin/bash
 
-# ၁။ လိုအပ်တဲ့ libraries တွေသွင်းမယ်
+# ၁။ ပင်မနေရာကို အရင်သွားပြီး အဟောင်းတွေ ရှင်းမယ်
+cd $HOME
+rm -rf my-license-server
+
+echo "Installing Aladdin Ruijie Bypass..."
+
+# ၂။ လိုအပ်တာတွေ သွင်းမယ်
 pkg install python git -y
 pip install requests colorama urllib3
 
-# ၂။ Git လုံခြုံရေးအတွက် Safe Directory သတ်မှတ်မယ် (ဒါမှ Error မတက်မှာ)
-git config --global --add safe.directory "*"
-
-# ၃။ နေရာဟောင်းတွေကို အကုန်ရှင်းပစ်မယ် (Folder ထပ်မနေအောင်လို့)
-cd ~
-rm -rf my-license-server
-
-# ၄။ Folder အသစ်ပြန် Clone မယ်
+# ၃။ GitHub ကနေ အသစ်ပြန်ယူမယ်
 git clone https://github.com/5Lkhant09/my-license-server
 
-# ၅။ Folder ထဲဝင်ပြီး Run မယ်
+# ၄။ Folder ထဲကို သေချာဝင်မယ်
 cd my-license-server
-python main.py
+
+# ၅။ ဖိုင်ရှိမရှိစစ်ပြီးမှ Run မယ် (ဖိုင်နာမည် မှန်ပါစေ)
+if [ -f "main.py" ]; then
+    python main.py
+elif [ -f "Pypass" ]; then
+    python Pypass
+else
+    echo "Error: Python file not found in repository!"
+fi
 
